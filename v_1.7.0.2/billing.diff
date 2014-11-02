@@ -1,0 +1,27 @@
+--- /home/nionios/d-centralize/workspace/Magento/magento-1.7.0.2/app/design/frontend/base/default/template/checkout/onepage/billing.phtml	2013-11-26 14:47:06.654984953 +0100
++++ /var/www/magento/app/design/frontend/base/default/template/checkout/onepage/billing.phtml	2013-11-26 15:22:53.913632633 +0100
+@@ -24,6 +24,24 @@
+  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+  */
+ ?>
++<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
++<script type="text/javascript" src="/magento/js/autocomplete.js"></script>
++<script type="text/javascript">
++// In case another JS library is used (like Prototype), make sure they're not conflicting
++var Jq = jQuery.noConflict();
++Jq(document).ready(function() {
++  Jq(document).applyAutocomplete({ 
++    // Invoer velden
++    postcode: '#billing\:postcode"',
++    streetnumber: '#billing\:street2',
++    // Uitvoer velden 
++    street: '#billing\:street1',
++    city: '#billing\:city',
++    province: '#billing\:region_id'
++  });
++});
++</script>
++
+ <form id="co-billing-form" action="">
+ <fieldset>
+     <ul class="form-list">

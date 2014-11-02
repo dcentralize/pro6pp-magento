@@ -1,0 +1,91 @@
+--- edit.phtml	2012-07-05 12:49:52.000000000 +0200
++++ /var/www/magento/app/design/frontend/base/default/template/customer/address/edit.phtml	2013-11-28 17:00:19.772743595 +0100
+@@ -31,6 +31,23 @@
+  * @see Mage_Customer_Block_Address_Edit
+  */
+ ?>
++<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
++<script type="text/javascript" src="/magento/js/autocomplete.js"></script>
++<script type="text/javascript">
++// In case another JS library is used (like Prototype), make sure they're not conflicting
++var Jq = jQuery.noConflict();
++Jq(document).ready(function() {
++  Jq(document).applyAutocomplete({
++    // Invoer velden
++    postcode: '#zip',
++    streetnumber: '#street_2',
++    // Uitvoer velden
++    street: '#street_1',
++    city: '#city',
++    province: '#region'
++  });
++});
++</script>
+ <?php if($this->getTitle()): ?>
+ <div class="page-title">
+     <h1><?php echo $this->getTitle() ?></h1>
+@@ -72,21 +89,38 @@
+     <div class="fieldset">
+         <h2 class="legend"><?php echo $this->__('Address') ?></h2>
+         <ul class="form-list">
+-        <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
+-            <li class="wide">
+-                <label for="street_1" class="required"><em>*</em><?php echo $this->__('Street Address') ?></label>
+-                <div class="input-box">
+-                    <input type="text" name="street[]" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" title="<?php echo $this->__('Street Address') ?>" id="street_1" class="input-text <?php echo $_streetValidationClass ?>" />
++           <li class="fields">
++                <div class="field">
++                    <label for="country" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
++                    <div class="input-box">
++                        <?php echo $this->getCountryHtmlSelect() ?>
++                    </div>
++                </div>
++                <div class="field">
++                    <label for="zip" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
++                    <div class="input-box">
++                        <input type="text" name="postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" title="<?php echo $this->__('Zip/Postal Code') ?>" id="zip" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
++                    </div>
+                 </div>
+             </li>
+         <?php $_streetValidationClass = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+         <?php for ($_i = 2, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+             <li class="wide">
++            <?php if ($_i ==2): ?>
++                <label for="street_2" class="required"><em>*</em><?php echo $this->__('Street Number') ?></label>
++            <?php endif; ?>
+                 <div class="input-box">
+                     <input type="text" name="street[]" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>" title="<?php echo $this->__('Street Address %s', $_i) ?>" id="street_<?php echo $_i ?>" class="input-text <?php echo $_streetValidationClass ?>" />
+                 </div>
+             </li>
+         <?php endfor; ?>
++            <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
++            <li class="wide">
++                <label for="street_1" class="required"><em>*</em><?php echo $this->__('Street Address') ?></label>
++                <div class="input-box">
++                    <input type="text" name="street[]" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" title="<?php echo $this->__('Street Address') ?>" id="street_1" class="input-text <?php echo $_streetValidationClass ?>" />
++                </div>
++            </li>
+             <?php if ($this->helper('customer/address')->isVatAttributeVisible()) : ?>
+             <li class="wide">
+                 <label for="vat_id"><?php echo $this->__('VAT Number') ?></label>
+@@ -117,20 +151,6 @@
+                     </div>
+                 </div>
+             </li>
+-            <li class="fields">
+-                <div class="field">
+-                    <label for="zip" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
+-                    <div class="input-box">
+-                        <input type="text" name="postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" title="<?php echo $this->__('Zip/Postal Code') ?>" id="zip" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
+-                    </div>
+-                </div>
+-                <div class="field">
+-                    <label for="country" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
+-                    <div class="input-box">
+-                        <?php echo $this->getCountryHtmlSelect() ?>
+-                    </div>
+-                </div>
+-            </li>
+             <li<?php if($this->canSetAsDefaultBilling()) echo ' class="control"' ?>>
+                 <?php if($this->isDefaultBilling()): ?>
+                     <strong><?php echo $this->__('Default Billing Address') ?></strong>

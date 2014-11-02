@@ -1,0 +1,94 @@
+--- shipping.phtml	2012-07-05 12:49:52.000000000 +0200
++++ /var/www/magento/app/design/frontend/base/default/template/checkout/onepage/shipping.phtml	2013-11-28 17:07:12.586790635 +0100
+@@ -24,6 +24,22 @@
+  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+  */
+ ?>
++<script type="text/javascript">
++// In case another JS library is used (like Prototype), make sure they're not conflicting
++var Jq = jQuery.noConflict();
++Jq(document).ready(function() {
++  Jq(document).applyAutocomplete({
++    // In
++    postcode : "#shipping\\:postcode",
++    streetnumber : "#shipping\\:street2",
++    //Out
++    street : "#shipping\\:street1",
++    city : "#shipping\\:city",
++    province : "#shipping\\:region"
++  });
++});
++</script>
++
+ <form action="" id="co-shipping-form">
+     <ul class="form-list">
+     <?php if ($this->customerHasAddresses()): ?>
+@@ -47,21 +63,42 @@
+                             </div>
+                         </div>
+                     </li>
+-            <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
+-                    <li class="wide">
+-                        <label for="shipping:street1" class="required"><em>*</em><?php echo $this->__('Address') ?></label>
+-                        <div class="input-box">
+-                            <input type="text" title="<?php echo $this->__('Street Address') ?>" name="shipping[street][]" id="shipping:street1" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?>" onchange="shipping.setSameAsBilling(false);" />
++                    <!-- Change -->
++                    <!-- Country - Postcode - Streetnumber come first -->
++                    <li class="fields">
++                    <div class="field">
++                            <label for="shipping:country_id" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
++                            <div class="input-box">
++                                <?php echo $this->getCountryHtmlSelect('shipping') ?>
++                            </div>
++                        </div>
++                        <div class="field">
++                            <label for="shipping:postcode" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
++                            <div class="input-box">
++                                <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="shipping[postcode]" id="shipping:postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" onchange="shipping.setSameAsBilling(false);" />
++                            </div>
+                         </div>
+                     </li>
++                    <!-- End Of Change -->
++
+             <?php $_streetValidationClass = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+             <?php for ($_i = 2, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+                     <li class="wide">
++                    <?php if ($_i ==2): ?>
++                        <label for="shipping:street2" class="required"><em>*</em><?php echo $this->__('Street Number') ?></label>
++                    <?php endif; ?>
+                         <div class="input-box">
+                             <input type="text" title="<?php echo $this->__('Street Address %s', $_i) ?>" name="shipping[street][]" id="shipping:street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClass ?>" onchange="shipping.setSameAsBilling(false);" />
+                         </div>
+                     </li>
+             <?php endfor; ?>
++            <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
++                    <li class="wide">
++                        <label for="shipping:street1" class="required"><em>*</em><?php echo $this->__('Address') ?></label>
++                        <div class="input-box">
++                            <input type="text" title="<?php echo $this->__('Street Address') ?>" name="shipping[street][]" id="shipping:street1" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?>" onchange="shipping.setSameAsBilling(false);" />
++                        </div>
++                    </li>
+                     <?php if ($this->helper('customer/address')->isVatAttributeVisible()) : ?>
+                     <li class="wide">
+                         <label for="billing:vat_id"><?php echo $this->__('VAT Number'); ?></label>
+@@ -92,20 +129,6 @@
+                             </div>
+                         </div>
+                     </li>
+-                    <li class="fields">
+-                        <div class="field">
+-                            <label for="shipping:postcode" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
+-                            <div class="input-box">
+-                                <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="shipping[postcode]" id="shipping:postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" onchange="shipping.setSameAsBilling(false);" />
+-                            </div>
+-                        </div>
+-                        <div class="field">
+-                            <label for="shipping:country_id" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
+-                            <div class="input-box">
+-                                <?php echo $this->getCountryHtmlSelect('shipping') ?>
+-                            </div>
+-                        </div>
+-                    </li>
+                     <li class="fields">
+                         <div class="field">
+                             <label for="shipping:telephone" class="required"><em>*</em><?php echo $this->__('Telephone') ?></label>
